@@ -9,25 +9,34 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using EvolentHealth.ContactManagement.Models;
+using EvolentHealth.ContactManagement.BusinessLayer;
 
 namespace EvolentHealth.ContactManagement.Controllers
 {
     public class ContactsController : ApiController
     {
-         
-        private EvolentHealthContactManagementContext db = new EvolentHealthContactManagementContext();
+        private IContactBusinessLayer _objContactBal;
+       
+
+        public ContactsController(IContactBusinessLayer objContactBal)
+        {
+            _objContactBal = objContactBal;
+        }
+
+        
 
         // GET: api/Contacts
         public IQueryable<Contact> GetContacts()
         {
-            return db.Contacts;
+            // return db.Contacts;
+            return _objContactBal.GetContacts();
         }
 
         // GET: api/Contacts/5
         [ResponseType(typeof(Contact))]
         public IHttpActionResult GetContact(int id)
         {
-            Contact contact = db.Contacts.Find(id);
+            Contact contact = _objContactBal.GetContactById(id);
             if (contact == null)
             {
                 return NotFound();
@@ -50,15 +59,15 @@ namespace EvolentHealth.ContactManagement.Controllers
                 return BadRequest();
             }
 
-            db.Entry(contact).State = EntityState.Modified;
+           
 
             try
             {
-                db.SaveChanges();
+                contact = _objContactBal.UpdateContact(id, contact);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ContactExists(id))
+                if (contact == null)
                 {
                     return NotFound();
                 }
@@ -68,26 +77,14 @@ namespace EvolentHealth.ContactManagement.Controllers
                 }
             }
             return Ok(contact);
-            //return StatusCode(HttpStatusCode.NoContent);
+            
         }
 
         // POST: api/Contacts
         [ResponseType(typeof(Contact))]
         public IHttpActionResult PostContact(Contact contact)
         {
-            var list = db.Contacts;
-            int newId = 0;
-            newId = list.Max(p => p.ContactId);
-            newId++;
-            contact.ContactId = newId;
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
-            db.Contacts.Add(contact);
-            db.SaveChanges();
-
+            contact = _objContactBal.AddContact(contact);
             return CreatedAtRoute("DefaultApi", new { id = contact.ContactId }, contact);
         }
 
@@ -95,30 +92,19 @@ namespace EvolentHealth.ContactManagement.Controllers
         [ResponseType(typeof(Contact))]
         public IHttpActionResult DeleteContact(int id)
         {
-            Contact contact = db.Contacts.Find(id);
+            Contact contact = _objContactBal.DeleteContact(id);
             if (contact == null)
             {
                 return NotFound();
             }
 
-            db.Contacts.Remove(contact);
-            db.SaveChanges();
+          
 
             return Ok(contact);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        
 
-        private bool ContactExists(int id)
-        {
-            return db.Contacts.Count(e => e.ContactId == id) > 0;
-        }
+        
     }
 }

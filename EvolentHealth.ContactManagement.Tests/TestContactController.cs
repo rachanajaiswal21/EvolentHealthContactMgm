@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EvolentHealth.ContactManagement.Controllers;
 using System.Collections.Generic;
 using EvolentHealth.ContactManagement.Models;
+using System.Web.Http.Results;
 
 namespace EvolentHealth.ContactManagement.Tests
 {
@@ -10,53 +11,34 @@ namespace EvolentHealth.ContactManagement.Tests
     public class TestContactController
     {
         [TestMethod]
-        public void GetAllProducts_ShouldReturnAllProducts()
+        public void GetAllContacts_ShouldReturnAllProducts()
         {
             var testContacts = GetTestContacts();
             var controller = new  ContactsController(testContacts);
 
-            var result = controller.GetAllProducts() as List<Contact>;
-            Assert.AreEqual(testProducts.Count, result.Count);
+            var result = controller.GetContacts() as List<Contact>;
+            Assert.AreEqual(testContacts.Count, result.Count);
         }
 
+       
         [TestMethod]
-        public async Task GetAllProductsAsync_ShouldReturnAllProducts()
+        public void GetContact_ShouldReturnCorrectContact()
         {
-            var testProducts = GetTestProducts();
-            var controller = new SimpleProductController(testProducts);
+            var testContacts = GetTestContacts();
+            var controller = new ContactsController(testContacts);
 
-            var result = await controller.GetAllProductsAsync() as List<Product>;
-            Assert.AreEqual(testProducts.Count, result.Count);
-        }
-
-        [TestMethod]
-        public void GetProduct_ShouldReturnCorrectProduct()
-        {
-            var testProducts = GetTestProducts();
-            var controller = new SimpleProductController(testProducts);
-
-            var result = controller.GetProduct(4) as OkNegotiatedContentResult<Product>;
+            var result = controller.GetContact(4) as OkNegotiatedContentResult<Contact>;
             Assert.IsNotNull(result);
-            Assert.AreEqual(testProducts[3].Name, result.Content.Name);
+            Assert.AreEqual(testContacts[3].FirstName, result.Content.FirstName);
         }
 
+     
         [TestMethod]
-        public async Task GetProductAsync_ShouldReturnCorrectProduct()
+        public void GetContact_ShouldNotFindContact()
         {
-            var testProducts = GetTestProducts();
-            var controller = new SimpleProductController(testProducts);
+            var controller = new ContactsController(GetTestContacts());
 
-            var result = await controller.GetProductAsync(4) as OkNegotiatedContentResult<Product>;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(testProducts[3].Name, result.Content.Name);
-        }
-
-        [TestMethod]
-        public void GetProduct_ShouldNotFindProduct()
-        {
-            var controller = new SimpleProductController(GetTestProducts());
-
-            var result = controller.GetProduct(999);
+            var result = controller.GetContact(999);
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
 
