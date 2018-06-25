@@ -5,52 +5,52 @@
 
 $(document).ready(function () {         
     contactList();
-    $("#contactForm").validate({
-        rules: {
-            firstname: "required",
-            lastname: "required",
-            email: {
-                required: true,
-                email: true
-            },
+    //$("#contactForm").validate({
+    //    rules: {
+    //        firstname: "required",
+    //        lastname: "required",
+    //        email: {
+    //            required: true,
+    //            email: true
+    //        },
 
-            phonenumber: {
-                required: true,      
-                phoneUS: true
-            },
+    //        phonenumber: {
+    //            required: true,      
+    //            phoneUS: true
+    //        },
 
-            status: "required"
-        },
-        messages: {
-            firstname: "Please enter first name",
-            lastname: "Please enter last name",
+    //        status: "required"
+    //    },
+    //    messages: {
+    //        firstname: "Please enter first name",
+    //        lastname: "Please enter last name",
 
-            email: "Please enter a valid email address",
-            phonenumber: "Please enter a valid phone number",
-            status: "Please select status",
-        },
-        errorElement: "em",
-        errorPlacement: function (error, element) {
-            // Add the `help-block` class to the error element
-            error.addClass("help-block");
+    //        email: "Please enter a valid email address",
+    //        phonenumber: "Please enter a valid phone number",
+    //        status: "Please select status",
+    //    },
+    //    errorElement: "em",
+    //    errorPlacement: function (error, element) {
+    //        // Add the `help-block` class to the error element
+    //        error.addClass("help-block");
 
-            if (element.prop("type") == "radio") {
-                error.inser(element.parent("div"));
-            } else {
-                error.insertAfter(element);
-            }
-        },
-        highlight: function (element, errorClass, validClass) {
-            $(element).parents(".col-sm-5").addClass("has-error").removeClass("has-success");
-        },
-        unhighlight: function (element, errorClass, validClass) {
-            $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
-        }
-    });
+    //        if (element.prop("type") == "radio") {
+    //            error.inser(element.parent("div"));
+    //        } else {
+    //            error.insertAfter(element);
+    //        }
+    //    },
+    //    highlight: function (element, errorClass, validClass) {
+    //        $(element).parents(".col-sm-5").addClass("has-error").removeClass("has-success");
+    //    },
+    //    unhighlight: function (element, errorClass, validClass) {
+    //        $(element).parents(".col-sm-5").addClass("has-success").removeClass("has-error");
+    //    }
+    //});
         });
        
  
-
+//GETS THE LIST OF ALL CONTACTS 
 function contactList() {
     // Call Web API to get a list of Contact
     $.ajax({
@@ -75,6 +75,7 @@ function contactListSuccess(contacts) {
     });
 }
 
+//ADDS ROW TO TABLE FOR EACH CONTACT
 function contactAddRow(contact) {
 
     // Check if <tbody> tag exists, add one if not
@@ -115,6 +116,8 @@ function contactBuildTableRow(contact) {
     return ret;
 }
 
+
+//GETS PARTICUALAR CONTACT USING CONTACT ID 
 function contactGet(ctl)
 {
     var contactid = $(ctl).data("id");
@@ -137,7 +140,7 @@ function contactGet(ctl)
 
 
 
-
+//DELETES PARTICULAR USING ID 
 function contactDelete(ctl) {
     if (confirm("Are you sure you want to delete?")) {
         var id = $(ctl).data("id");
@@ -155,6 +158,8 @@ function contactDelete(ctl) {
     }
     return false;
 }
+
+//HANDLE EXCEPTION IN CSE OF ERROR
 function handleException(request, message,
                  error) {
     var msg = "";
@@ -167,6 +172,8 @@ function handleException(request, message,
     alert(msg);
 }
 
+//MAP MODEL FIELD TO FORM FIELD 
+
 function contactToFields(contact) {
     debugger;
     $("#contactid").val(contact.ContactId);
@@ -174,15 +181,12 @@ function contactToFields(contact) {
     $("#lastname").val(contact.LastName);
     $("#email").val(contact.Email);
     $("#phonenumber").val(contact.PhoneNumber);
-    $("#status").val(contact.IsActive);
-    if (contact.IsActive) {
-        $("#status_active").prop("checked", true);
+    
+    if (contact.IsActive) 
+        $("#status").prop("checked", true);
       
-    }
-    else 
-    {
-        $("#status_inactive").prop("checked", true);
-    }
+   
+   
 }
 
 var Contact = {
@@ -221,7 +225,7 @@ function updateClick() {
     }
 }
 
-
+//ADDS CONTACT TO TABLE USING API 
 function contactAdd(contact) {
     $.ajax({
         url: "/api/Contacts",
@@ -238,6 +242,8 @@ function contactAdd(contact) {
     });
 }
 
+
+//UPDATE CONTACT TO TABLE USING API 
 function contactUpdate(contact) {
     $.ajax({
         url: "/api/Contacts/"+contact.ContactId,
@@ -255,7 +261,7 @@ function contactUpdate(contact) {
 }
 
 function contactUpdateSuccess(contact) {
-    debugger;
+     
     contactUpdateInTable(contact);
    
 }
@@ -291,7 +297,7 @@ function addClick() {
     $("#updateButton").text("Add");
 }
 
- 
+ //va;idation for form
     $("#contactForm").validate({
         rules: {
             firstname: "required",
@@ -301,7 +307,8 @@ function addClick() {
                 email: true
             },
             phonenumber: {
-                required: true,
+                required: true,      
+                phoneUS: true,
                 minlength: 10
             },
 
@@ -312,7 +319,7 @@ function addClick() {
             lastname: "Please enter lastname",
 
             email: "Please enter a valid email address",
-            phonenumber: "Please enter phone number",
+            phonenumber: "Please valid enter phone number",
             status: "Please select status",
         },
         errorElement: "em",

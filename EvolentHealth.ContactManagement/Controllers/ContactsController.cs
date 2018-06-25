@@ -14,6 +14,7 @@ namespace EvolentHealth.ContactManagement.Controllers
 {
     public class ContactsController : ApiController
     {
+         
         private EvolentHealthContactManagementContext db = new EvolentHealthContactManagementContext();
 
         // GET: api/Contacts
