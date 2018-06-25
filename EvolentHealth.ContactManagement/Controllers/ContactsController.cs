@@ -16,8 +16,9 @@ namespace EvolentHealth.ContactManagement.Controllers
     public class ContactsController : ApiController
     {
         private IContactBusinessLayer _objContactBal;
-       
 
+        public ContactsController()
+        { }
         public ContactsController(IContactBusinessLayer objContactBal)
         {
             _objContactBal = objContactBal;
